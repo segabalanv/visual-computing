@@ -4,6 +4,8 @@ PGraphics pg;
 PImage img;
 // square coordinates and size
 float bx, by; int sx = 128, sy = 72;
+// scaling factor
+float sf = 0.5;
 // dragging related variables
 float xOffset = 0.0;
 float yOffset = 0.0;
@@ -24,11 +26,13 @@ void draw() {
   // put the map in the main canvas it will move depending
   // on the position of a rectangle in the minimap that
   // follows the mouse pointer.
-  image(img,map(bx,0,242,0,-1212),map(by+156,156,360,0,-1022));
+  image(img,map(bx,0,242,0,-img.width/sf),
+        map(by+156,156,360,0,-img.height/sf),
+        img.width/sf, img.height/sf);
   
   // test if the cursor is over the box
-  if(mouseX > bx && mouseX < bx+sx &&
-     mouseY > by+156 && mouseY < by+156+sy) {
+  if(mouseX > bx && mouseX < bx+(sx*sf) &&
+     mouseY > by+156 && mouseY < by+156+(sy*sf)) {
      overBox = true;
    } else {
      overBox = false;
@@ -43,7 +47,7 @@ void draw() {
   // canvas
   pg.noFill();
   pg.stroke(255);
-  pg.rect(bx,by,sx,sy);
+  pg.rect(bx,by,sx*sf,sy*sf);
   
   pg.endDraw(); 
   
@@ -63,11 +67,24 @@ void mousePressed() {
 
 void mouseDragged() {
   if(locked) {
-    bx = constrain(mouseX-xOffset,0,242-sx);
-    by = constrain(mouseY-yOffset,0,pg.height-sy);
+    bx = constrain(mouseX-xOffset,0,242-(sx*sf));
+    by = constrain(mouseY-yOffset,0,pg.height-(sy*sf));
   }
 }
 
 void mouseReleased() {
   locked = false;
+}
+
+void keyPressed() {
+  if(key == CODED) {
+    if(keyCode == UP) {
+      // TODO: constrain value
+      sf -= 0.1;
+    }
+    if(keyCode == DOWN) {
+      // TODO: constrain value
+      sf += 0.1;
+    }
+  }
 }
