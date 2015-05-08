@@ -11,6 +11,8 @@ float xOffset = 0.0;
 float yOffset = 0.0;
 boolean overBox = false;
 boolean locked = false;
+// set map as active or inactive
+boolean activeMap = true;
 
 void setup() {
   size(640,360);
@@ -52,23 +54,29 @@ void draw() {
   pg.endDraw(); 
   
   // show the minimap on the screen
-  image(pg,0,156);
+  if(activeMap) {
+    image(pg,0,156);
+  }
 }
 
 void mousePressed() {
-  if(overBox) {
-    locked = true;
-  } else {
-    locked = false;
+  if(activeMap) { 
+    if(overBox) {
+      locked = true;
+    } else {
+      locked = false;
+    }
+    xOffset = mouseX-bx;
+    yOffset = mouseY-by;
   }
-  xOffset = mouseX-bx;
-  yOffset = mouseY-by;
 }
 
 void mouseDragged() {
-  if(locked) {
-    bx = constrain(mouseX-xOffset,0,242-(sx*sf));
-    by = constrain(mouseY-yOffset,0,pg.height-(sy*sf));
+  if(activeMap) {
+    if(locked) {
+      bx = constrain(mouseX-xOffset,0,242-(sx*sf));
+      by = constrain(mouseY-yOffset,0,pg.height-(sy*sf));
+    }
   }
 }
 
@@ -77,14 +85,19 @@ void mouseReleased() {
 }
 
 void keyPressed() {
-  if(key == CODED) {
-    if(keyCode == UP) {
-      // TODO: constrain value
-      sf -= 0.1;
-    }
-    if(keyCode == DOWN) {
-      // TODO: constrain value
-      sf += 0.1;
+  if(key == 'h') {
+    activeMap = !activeMap;
+  }
+  if(activeMap) {
+    if(key == CODED) {
+      if(keyCode == UP) {
+        // TODO: constrain value
+        sf -= 0.1;
+      }
+      if(keyCode == DOWN) {
+        // TODO: constrain value
+        sf += 0.1;
+      }
     }
   }
 }
